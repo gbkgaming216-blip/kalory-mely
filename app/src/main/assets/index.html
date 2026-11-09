@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Hitung Kalori untuk Melly</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--bg:#f4f6f3;--card:#fff;--text:#1d241f;--muted:#6a7570;--accent:#2f9e5b;--over:#e0523f;--line:rgba(120,130,125,.25);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111513;--card:#1b211e;--text:#eaf0ec;--muted:#98a39d;--accent:#4cc27c;--over:#ff7a68}}
+:root[data-theme="dark"]{--bg:#111513;--card:#1b211e;--text:#eaf0ec;--muted:#98a39d;--accent:#4cc27c;--over:#ff7a68}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;padding-bottom:90px}
+main{max-width:560px;margin:0 auto;padding:14px}
+button{font:inherit;color:inherit;cursor:pointer}
+.hero{text-align:center;margin:4px 0 12px}
+.hero h1{margin:0;font-size:22px}
+.hero p{margin:2px 0 0;color:var(--accent);font-weight:600;font-size:16px}
+.nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.nav button{background:var(--card);border:0;border-radius:12px;width:42px;height:42px;font-size:22px}
+.nav b{font-size:17px;text-transform:capitalize}
+.card{background:var(--card);border-radius:16px;padding:14px;margin-bottom:12px}
+.big{font-size:40px;font-weight:700;line-height:1}
+.muted{color:var(--muted);font-size:14px}
+.bar{height:12px;border-radius:8px;background:var(--line);margin:12px 0 8px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:8px;transition:width .3s}
+.bar.over i{background:var(--over)}
+.link{background:none;border:0;color:var(--accent);padding:0;font-size:14px}
+.macros{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.macros div{background:var(--bg);border-radius:12px;padding:8px;text-align:center}
+.macros b{display:block;font-size:18px}
+.macros span{font-size:12px;color:var(--muted)}
+.mh{display:flex;justify-content:space-between;font-weight:600;margin-bottom:6px}
+.row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid var(--line);gap:8px}
+.row small{display:block;color:var(--muted)}
+.row button{background:none;border:0;color:var(--muted);font-size:18px;padding:4px 8px}
+.empty{color:var(--muted);font-size:14px;padding:4px 0}
+.fab{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--accent);color:#fff;border:0;border-radius:28px;padding:14px 26px;font-weight:600;font-size:16px;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.sheet{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-end;z-index:5}
+.sheet.on{display:flex}
+.panel{background:var(--bg);width:100%;max-width:560px;margin:0 auto;border-radius:20px 20px 0 0;padding:14px;max-height:90%;overflow:auto;padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))}
+input,select{width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);font-size:16px;margin-bottom:8px}
+.list{max-height:200px;overflow:auto;background:var(--card);border-radius:12px;margin-bottom:8px}
+.item{display:flex;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--line);cursor:pointer;gap:8px}
+.item.sel{background:rgba(47,158,91,.18)}
+.chips{display:flex;gap:6px;margin:6px 0}
+.chips button{flex:1;padding:9px 0;border-radius:10px;border:1px solid var(--line);background:var(--card)}
+.chips button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.go{width:100%;background:var(--accent);color:#fff;border:0;border-radius:12px;padding:13px;font-weight:600;font-size:16px;margin-top:4px}
+.go:disabled{opacity:.4}
+.alt{background:var(--card);color:var(--text);border:1px solid var(--line)}
+.two{display:grid;grid-template-columns:2fr 1fr;gap:8px}
+.four{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+h3{margin:12px 0 6px;font-size:15px}
+.ph label{display:flex;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.ph input{width:auto;margin:0}
+</style>
+</head>
+<body>
+<main>
+  <div class="hero"><h1>🥗 Hitung Kalori</h1><p>Untuk Melly 💚</p></div>
+  <div class="nav"><button id="prev" aria-label="Hari sebelumnya">‹</button><b id="dl"></b><button id="next" aria-label="Hari berikutnya">›</button></div>
+  <div class="card">
+    <div class="big"><span id="tot">0</span> <span class="muted">kkal</span></div>
+    <div class="bar" id="bar"><i id="fill"></i></div>
+    <div class="muted"><span id="rest"></span> · <button class="link" id="tg">Ubah target</button></div>
+    <div class="macros"><div><b id="mp">0</b><span>Protein (g)</span></div><div><b id="mc">0</b><span>Karbo (g)</span></div><div><b id="mf">0</b><span>Lemak (g)</span></div></div>
+  </div>
+  <div id="meals"></div>
+  <p class="muted" style="text-align:center">Angka kalori dan gizi adalah perkiraan rata-rata per porsi.</p>
+</main>
+<button class="fab" id="add">+ Tambah makanan</button>
+
+<div class="sheet" id="sheet"><div class="panel">
+  <select id="meal"></select>
+  <button class="go alt" id="cam" style="display:none;margin:0 0 8px">📷 Foto makanan (perkiraan AI)</button>
+  <input type="file" id="file" accept="image/*" capture="environment" hidden>
+  <div class="ph" id="ph"></div>
+  <input id="q" placeholder="Cari makanan (mis. nasi goreng)" autocomplete="off">
+  <div class="list" id="list"></div>
+  <div class="chips" id="chips"></div>
+  <button class="go" id="go" disabled>Pilih makanan dulu</button>
+  <h3>Atau tambah manual</h3>
+  <div class="two"><input id="mn" placeholder="Nama makanan"><input id="mk" type="number" inputmode="decimal" placeholder="kkal"></div>
+  <div class="four"><input id="mpp" type="number" inputmode="decimal" placeholder="Protein g"><input id="mcc" type="number" inputmode="decimal" placeholder="Karbo g"><input id="mff" type="number" inputmode="decimal" placeholder="Lemak g"></div>
+  <button class="go alt" id="mgo">Tambah manual</button>
+  <button class="link" id="close" style="display:block;margin:12px auto 0">Tutup</button>
+</div></div>
+
+<script>
+// [nama, porsi, kkal, protein, karbo, lemak]
+const FOODS=[
+["Nasi putih","1 piring",260,5,57,0.5],["Nasi merah","1 piring",220,5,46,2],["Nasi goreng","1 piring",350,9,50,13],["Nasi uduk","1 piring",330,6,50,11],["Nasi kuning","1 piring",320,6,52,9],["Bubur ayam","1 mangkuk",300,12,40,9],["Lontong sayur","1 porsi",350,9,50,13],["Mie goreng","1 piring",400,10,55,16],["Mie ayam","1 mangkuk",400,14,55,13],["Mie instan goreng","1 bungkus",380,8,52,16],["Mie instan kuah","1 bungkus",350,8,50,13],["Kwetiau goreng","1 piring",420,12,58,15],["Bihun goreng","1 piring",330,8,52,10],["Spaghetti saus","1 piring",380,13,62,8],
+["Roti tawar","1 lembar",70,2,13,1],["Roti gandum","1 lembar",80,3,14,1],["Roti selai","1 buah",150,3,27,3],["Oatmeal","1 mangkuk",150,5,27,3],["Sereal susu","1 mangkuk",200,6,38,3],["Kentang rebus","1 buah",130,3,30,0.2],["Singkong rebus","1 potong",160,1,38,0.3],["Ubi rebus","1 buah",115,2,27,0.2],["Jagung rebus","1 buah",130,5,29,2],
+["Ayam goreng","1 potong",250,20,6,16],["Ayam bakar","1 potong",200,22,3,11],["Ayam goreng tepung","1 potong",290,18,12,18],["Ayam geprek","1 porsi",400,22,20,25],["Rendang sapi","1 potong",200,17,4,13],["Semur daging","1 porsi",250,18,10,15],["Sate ayam","10 tusuk",330,26,14,19],["Lele goreng","1 ekor",220,18,5,14],["Ikan goreng","1 potong",150,17,3,8],["Ikan bakar","1 potong",140,20,1,6],["Pepes ikan","1 bungkus",120,15,3,5],["Udang goreng","1 porsi",200,18,8,11],
+["Telur rebus","1 butir",75,6,0.6,5],["Telur dadar","1 butir",110,7,1,9],["Telur mata sapi","1 butir",90,6,0.5,7],["Tempe goreng","1 potong",80,5,5,5],["Tahu goreng","1 potong",35,2,1,3],["Perkedel kentang","1 buah",90,2,8,5],["Orek tempe","1 porsi",120,6,8,7],
+["Gado-gado","1 porsi",300,12,25,17],["Pecel sayur","1 porsi",250,10,25,13],["Karedok","1 porsi",230,9,20,13],["Urap sayur","1 porsi",150,5,12,9],["Capcay","1 porsi",150,8,12,8],["Tumis kangkung","1 porsi",90,3,6,6],["Sayur sop","1 mangkuk",80,4,10,3],["Sayur asem","1 mangkuk",70,2,14,1],["Sayur lodeh","1 mangkuk",150,3,12,10],["Soto ayam","1 mangkuk",250,18,20,10],["Soto betawi","1 mangkuk",380,16,14,28],["Bakso","1 mangkuk",300,15,30,12],["Rawon","1 mangkuk",300,22,12,18],["Gudeg komplit","1 porsi",350,15,40,15],["Opor ayam","1 porsi",300,22,5,22],["Salad sayur","1 mangkuk",80,3,10,3],
+["Pisang goreng","1 buah",130,1,20,6],["Bakwan / gorengan","1 buah",100,2,10,6],["Tahu isi","1 buah",100,3,9,6],["Risoles","1 buah",150,4,17,7],["Lumpia goreng","1 buah",100,3,10,5],["Pempek","1 buah",160,8,22,4],["Siomay","1 porsi",250,14,25,11],["Batagor","1 porsi",350,14,28,20],["Martabak manis","1 potong",250,5,35,10],["Martabak telur","1 potong",200,9,17,11],["Donat","1 buah",250,3,30,13],["Kerupuk","1 buah",30,0.3,4,1.5],["Keripik kentang","1 bungkus kecil",160,2,15,10],["Biskuit","1 keping",50,0.7,7,2],["Cokelat batang","1 batang",240,3,25,14],["Es krim","1 scoop",140,2,16,7],
+["Pisang","1 buah",90,1,23,0.3],["Apel","1 buah",95,0.5,25,0.3],["Jeruk","1 buah",60,1,15,0.2],["Semangka","1 potong",45,1,11,0.2],["Melon","1 potong",50,1,12,0.3],["Pepaya","1 potong",60,1,15,0.2],["Mangga","1 buah",200,3,50,1],["Anggur","1 genggam",60,0.6,16,0.2],["Alpukat","1 buah",240,3,13,22],
+["Teh manis","1 gelas",100,0,25,0],["Es teh manis","1 gelas",100,0,25,0],["Teh tawar","1 gelas",2,0,0,0],["Kopi hitam","1 gelas",5,0,1,0],["Kopi susu","1 gelas",150,3,20,6],["Kopi susu gula aren","1 gelas",200,3,30,7],["Susu sapi","1 gelas",150,8,12,8],["Susu kedelai","1 gelas",100,7,8,4],["Yogurt","1 cup",120,6,17,3],["Jus jeruk","1 gelas",110,2,26,0.5],["Jus alpukat","1 gelas",300,4,30,18],["Minuman bersoda","1 kaleng",140,0,35,0],["Teh susu boba","1 gelas",350,3,60,10],["Air putih","1 gelas",0,0,0,0],
+["Burger","1 buah",300,15,30,13],["Pizza","1 slice",285,12,36,10],["Kentang goreng","1 porsi",365,4,48,17],["Hot dog","1 buah",290,10,24,17],["Nugget ayam","5 potong",250,12,15,16],["Sandwich","1 buah",300,15,35,10],["Kebab","1 buah",350,18,35,15]
+];
+const MEALS=["Sarapan","Makan siang","Makan malam","Camilan"];
+const PORT=[0.5,1,1.5,2,3];
+let st={target:2000,entries:[]},day=new Date(),sel=null,por=1,SAMPLE=null,found=[];
+const $=id=>document.getElementById(id);
+const r1=n=>Math.round(n*10)/10;
+function load(){try{const r=localStorage.getItem("kalori");if(r)st=Object.assign(st,JSON.parse(r))}catch(e){}}
+function save(){try{localStorage.setItem("kalori",JSON.stringify(st))}catch(e){}}
+function key(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function el(t,c,x){const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+function label(){const t=key(new Date()),y=new Date();y.setDate(y.getDate()-1);const k=key(day);
+  if(k===t)return"Hari ini";if(k===key(y))return"Kemarin";
+  return day.toLocaleDateString("id-ID",{weekday:"long",day:"numeric",month:"long"})}
+const sum=(a,k)=>a.reduce((s,e)=>s+(e[k]||0),0);
+function render(){
+  $("dl").textContent=label();
+  const es=st.entries.filter(e=>e.date===key(day));
+  const tot=sum(es,"kcal");
+  $("tot").textContent=Math.round(tot);
+  $("fill").style.width=Math.min(100,tot/st.target*100)+"%";
+  $("bar").classList.toggle("over",tot>st.target);
+  $("rest").textContent=tot>st.target?"Lebih "+Math.round(tot-st.target)+" kkal dari target "+st.target:"Sisa "+Math.round(st.target-tot)+" dari target "+st.target+" kkal";
+  $("mp").textContent=Math.round(sum(es,"p"));$("mc").textContent=Math.round(sum(es,"c"));$("mf").textContent=Math.round(sum(es,"f"));
+  const box=$("meals");box.textContent="";
+  MEALS.forEach(m=>{
+    const list=es.filter(e=>e.meal===m);
+    const c=el("div","card"),h=el("div","mh");
+    h.append(el("span",null,m),el("span",null,Math.round(sum(list,"kcal"))+" kkal"));c.append(h);
+    if(!list.length)c.append(el("div","empty","Belum ada"));
+    list.forEach(e=>{
+      const r=el("div","row"),l=el("div");
+      const info=(e.por?e.por+"× "+e.unit:(e.unit||"manual"))+(e.p||e.c||e.f?" · P"+r1(e.p||0)+" K"+r1(e.c||0)+" L"+r1(e.f||0):"");
+      l.append(el("span",null,e.name),el("small",null,info));
+      const d=el("button",null,"✕");d.setAttribute("aria-label","Hapus");
+      d.onclick=()=>{st.entries=st.entries.filter(x=>x.id!==e.id);save();render()};
+      const right=el("div");right.style.cssText="display:flex;align-items:center";
+      right.append(el("span",null,Math.round(e.kcal)+" kkal"),d);
+      r.append(l,right);c.append(r);
+    });
+    box.append(c);
+  });
+}
+function mealNow(){const h=new Date().getHours();return h<10?0:h<15?1:h<19?2:3}
+function renderList(){
+  const q=$("q").value.trim().toLowerCase(),box=$("list");box.textContent="";
+  FOODS.filter(f=>f[0].toLowerCase().includes(q)).forEach(f=>{
+    const i=el("div","item"+(sel===f?" sel":""));
+    i.append(el("span",null,f[0]+" · "+f[1]),el("b",null,f[2]));
+    i.onclick=()=>{sel=f;renderList();upd()};box.append(i);
+  });
+  if(!box.children.length)box.append(el("div","empty","Tidak ketemu. Tambah manual atau pakai foto."));
+}
+function upd(){
+  const b=$("go");b.disabled=!sel;
+  b.textContent=sel?"Tambah "+Math.round(sel[2]*por)+" kkal":"Pilih makanan dulu";
+  $("chips").querySelectorAll("button").forEach(x=>x.classList.toggle("on",+x.dataset.p===por));
+}
+function addEntry(o){st.entries.push(Object.assign({id:Date.now()+Math.random(),date:key(day),meal:MEALS[+$("meal").value]},o));save();render()}
+function openSheet(){$("meal").value=mealNow();sel=null;por=1;$("q").value="";$("ph").textContent="";renderList();upd();$("sheet").classList.add("on")}
+function closeSheet(){$("sheet").classList.remove("on")}
+
+// ---- Foto makanan (perkiraan AI) ----
+function shrink(file){return new Promise(res=>{
+  const img=new Image(),u=URL.createObjectURL(file);
+  img.onload=()=>{const s=Math.min(1,1024/Math.max(img.width,img.height)),c=document.createElement("canvas");
+    c.width=img.width*s;c.height=img.height*s;c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+    URL.revokeObjectURL(u);c.toBlob(b=>res(b||file),"image/jpeg",.8)};
+  img.onerror=()=>res(file);img.src=u})}
+async function analyze(file){
+  const ph=$("ph");ph.textContent="Menganalisis foto…";found=[];
+  try{
+    const blob=await shrink(file);
+    const {text}=await SAMPLE("Ini foto makanan atau minuman. Kenali setiap item yang terlihat dan perkirakan porsi serta gizinya. Balas HANYA dengan JSON array tanpa teks lain, bentuk: [{\"name\":\"nama dalam bahasa Indonesia\",\"unit\":\"porsi yang terlihat, mis. 1 piring\",\"kcal\":angka,\"p\":gram protein,\"c\":gram karbohidrat,\"f\":gram lemak}]. Jika tidak ada makanan, balas [].",{images:[blob],modelTier:"default"});
+    const m=text.match(/\[[\s\S]*\]/);found=m?JSON.parse(m[0]):[];
+  }catch(e){ph.textContent=e&&e.code==="not_granted"?"Izin AI ditolak, jadi fitur foto tidak bisa dipakai.":"Gagal membaca foto. Coba lagi atau pilih manual.";return}
+  ph.textContent="";
+  if(!found.length){ph.textContent="Tidak ada makanan yang terdeteksi.";return}
+  ph.append(el("div","muted","Perkiraan dari foto, boleh dicentang sesuai kenyataan:"));
+  found.forEach((f,i)=>{f.on=true;const l=el("label");const cb=document.createElement("input");cb.type="checkbox";cb.checked=true;cb.onchange=()=>f.on=cb.checked;
+    l.append(cb,el("span",null,f.name+" · "+f.unit+" · "+Math.round(f.kcal)+" kkal"));ph.append(l)});
+  const b=el("button","go","Tambah yang dicentang");
+  b.onclick=()=>{found.filter(f=>f.on).forEach(f=>addEntry({name:String(f.name),unit:String(f.unit||"dari foto"),kcal:+f.kcal||0,p:+f.p||0,c:+f.c||0,f:+f.f||0}));closeSheet()};
+  ph.append(b);
+}
+async function init(){
+  load();
+  MEALS.forEach((m,i)=>{const o=el("option",null,m);o.value=i;$("meal").append(o)});
+  PORT.forEach(p=>{const b=el("button",null,p===0.5?"½×":p+"×");b.dataset.p=p;b.onclick=()=>{por=p;upd()};$("chips").append(b)});
+  $("q").oninput=renderList;
+  $("add").onclick=openSheet;$("close").onclick=closeSheet;
+  $("sheet").onclick=e=>{if(e.target===$("sheet"))closeSheet()};
+  $("go").onclick=()=>{if(!sel)return;addEntry({name:sel[0],unit:sel[1],por:por,kcal:sel[2]*por,p:sel[3]*por,c:sel[4]*por,f:sel[5]*por});closeSheet()};
+  $("mgo").onclick=()=>{const n=$("mn").value.trim(),k=parseFloat($("mk").value);
+    if(!n||!(k>=0))return;
+    addEntry({name:n,kcal:k,p:parseFloat($("mpp").value)||0,c:parseFloat($("mcc").value)||0,f:parseFloat($("mff").value)||0});
+    ["mn","mk","mpp","mcc","mff"].forEach(i=>$(i).value="");closeSheet()};
+  $("prev").onclick=()=>{day.setDate(day.getDate()-1);render()};
+  $("next").onclick=()=>{day.setDate(day.getDate()+1);render()};
+  $("tg").onclick=()=>{const v=parseInt(prompt("Target kalori harian (kkal):",st.target),10);if(v>0){st.target=v;save();render()}};
+  $("cam").onclick=()=>$("file").click();
+  $("file").onchange=e=>{const f=e.target.files[0];e.target.value="";if(f)analyze(f)};
+  render();
+  try{
+    SAMPLE=await claude.use("sample");
+    if(SAMPLE){const l=await SAMPLE.limits();if(l&&l.images)$("cam").style.display="block"}
+  }catch(e){}
+}
+init();
+</script>
+</body>
+</html>
